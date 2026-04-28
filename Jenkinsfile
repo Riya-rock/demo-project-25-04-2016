@@ -4,19 +4,20 @@ pipeline {
     stages {
         stage('Clone') {
             steps {
-                echo 'Cloning done automatically'
+                echo 'Code cloned'
             }
         }
 
-        stage('Build') {
+        stage('Build Docker Image') {
             steps {
-                echo 'Build stage running...'
+                sh 'docker build -t riya-todo-app .'
             }
         }
 
-        stage('Test') {
+        stage('Run Container') {
             steps {
-                echo 'Testing...'
+                sh 'docker rm -f riya-container || true'
+                sh 'docker run -d -p 8000:8000 --name riya-container riya-todo-app'
             }
         }
     }
