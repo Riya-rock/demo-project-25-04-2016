@@ -15,15 +15,15 @@ pipeline {
         }
 
         stage('SonarQube Scan') {
-            steps {
-                withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
-                    sh '''
-                    sonar-scanner \
-                      -Dsonar.projectKey=riya-todo-app \
-                      -Dsonar.sources=. \
-                      -Dsonar.host.url=http://192.168.153.128:9000 \
-                      -Dsonar.login=$SONAR_TOKEN
-                    '''
+    steps {
+        withSonarQubeEnv('sonarqube') {
+            sh '''
+            sonar-scanner \
+            -Dsonar.projectKey=riya-todo-app \
+            -Dsonar.sources=. \
+            -Dsonar.host.url=http://192.168.153.128:9000 \
+            -Dsonar.login=$SONAR_AUTH_TOKEN
+            '''
                 }
             }
         }
