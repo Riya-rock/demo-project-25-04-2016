@@ -17,13 +17,14 @@ pipeline {
         stage('SonarQube Scan') {
     steps {
         script {
-            def scannerHome = tool 'sonar-scanner'
+            def scannerHome = tool 'sonar-scanner'   
+
             withSonarQubeEnv('sonarqube') {
                 sh """
                 ${scannerHome}/bin/sonar-scanner \
                 -Dsonar.projectKey=riya-todo-app \
                 -Dsonar.sources=. \
-                -Dsonar.projectName=riya-todo-app
+                -Dsonar.login=$SONAR_AUTH_TOKEN
                 """
             }
         }
