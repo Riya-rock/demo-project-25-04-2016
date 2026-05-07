@@ -24,6 +24,7 @@ pipeline {
                 ${scannerHome}/bin/sonar-scanner \
                 -Dsonar.projectKey=riya-todo-app \
                 -Dsonar.sources=. \
+                -Dsonar.host.url=http://localhost:9000 \
                 -Dsonar.login=$SONAR_AUTH_TOKEN
                 """
             }
