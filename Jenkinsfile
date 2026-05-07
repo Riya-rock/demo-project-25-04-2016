@@ -35,7 +35,13 @@ pipeline {
         sh 'export PATH=$PATH:/home/riyamhatre/.local/bin && cyclonedx-py environment -o sbom.xml'
     }
 }
-
+ stage('Trivy Container Scan') {
+            steps {
+                sh '''
+                trivy image --severity HIGH,CRITICAL --exit-code 0 --format table riya-todo-app
+                '''
+            }
+        }
         stage('Run Container') {
             steps {
                 sh 'docker rm -f riya-container || true'
