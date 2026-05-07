@@ -17,9 +17,9 @@ pipeline {
         stage('SonarQube Scan') {
     steps {
         script {
-            def scannerHome = tool 'sonar-scanner'   
+            def scannerHome = tool 'SonarScanner'
 
-            withSonarQubeEnv('sonarqube') {
+            withSonarQubeEnv('SonarQube') {
                 sh """
                 ${scannerHome}/bin/sonar-scanner \
                 -Dsonar.projectKey=riya-todo-app \
@@ -31,7 +31,6 @@ pipeline {
         }
     }
 }
-
         stage('Run Container') {
             steps {
                 sh 'docker rm -f riya-container || true'
