@@ -37,13 +37,7 @@ pipeline {
 }
  stage('Trivy Container Scan') {
             steps {
-               trivy image \
-        --scanners vuln \
-        --severity HIGH,CRITICAL \
-        --exit-code 0 \
-        --no-progress \
-        dockeriya03/riya-todo-app:latest
-        '''
+               sh 'trivy image --scanners vuln --severity HIGH,CRITICAL --exit-code 0 --no-progress dockeriya03/riya-todo-app:latest'
             }
         }
         stage('Run Container') {
