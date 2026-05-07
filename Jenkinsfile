@@ -15,22 +15,27 @@ pipeline {
         }
 
         stage('SonarQube Scan') {
-    steps {
-        script {
-            def scannerHome = tool 'SonarScanner'
-
-            withSonarQubeEnv('SonarQube') {
-                sh """
-                ${scannerHome}/bin/sonar-scanner \
-                -Dsonar.projectKey=riya-todo-app \
-                -Dsonar.sources=. \
-                -Dsonar.host.url=http://localhost:9000 \
-                -Dsonar.login=$SONAR_AUTH_TOKEN
-                """
+            steps {
+                script {
+                    def scannerHome = tool 'SonarScanner'
+                    withSonarQubeEnv('SonarQube') {
+                        sh """
+                        ${scannerHome}/bin/sonar-scanner \
+                        -Dsonar.projectKey=riya-todo-app \
+                        -Dsonar.sources=. \
+                        -Dsonar.login=$SONAR_AUTH_TOKEN
+                        """
+                    }
+                }
             }
         }
-    }
-}
+
+        stage('Trivy Scan') {
+            steps {
+                sh 'trivy image --exit-code 1 --severity HIGH,CRITICAL riya-todo-app'
+            }
+        }
+
         stage('Run Container') {
             steps {
                 sh 'docker rm -f riya-container || true'
