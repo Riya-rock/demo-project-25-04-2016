@@ -32,7 +32,7 @@ pipeline {
 
         stage('Generate SBOM') {
     steps {
-        sh 'cyclonedx-py environment -o sbom.xml'
+        sh 'export PATH=$PATH:/home/riyamhatre/.local/bin && cyclonedx-py environment -o sbom.xml'
     }
 }
 
