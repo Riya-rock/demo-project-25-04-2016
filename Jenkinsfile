@@ -32,7 +32,7 @@ pipeline {
 
         stage('Generate SBOM') {
     steps {
-        sh 'cyclonedx-npm --output-file sbom.xml'
+        sh 'cyclonedx-p -o sbom.xml'
     }
 }
 
