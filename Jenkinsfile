@@ -15,28 +15,16 @@ pipeline {
             }
         }
 
-        stage('SonarQube Scan') {
-            steps {
-                script {
-
-                    def scannerHome = tool 'SonarScanner'
-
-                    withSonarQubeEnv('SonarQube') {
-
-                        withCredentials([string(credentialsId: 'SONAR_AUTH_TOKEN', variable: 'SONAR_TOKEN')]) {
-
-                            sh """
-                            ${scannerHome}/bin/sonar-scanner \
-                            -Dsonar.projectKey=riya-todo-app \
-                            -Dsonar.sources=. \
-                            -Dsonar.host.url=http://localhost:9000 \
-                            -Dsonar.login=${SONAR_TOKEN}
-                            """
-                        }
-                    }
-                }
-            }
-        }
+        stage('Create Sonar Properties') {
+    steps {
+        writeFile file: 'sonar-project.properties', text: '''
+sonar.projectKey=riya-todo-app
+sonar.projectName=riya-todo-app
+sonar.sources=.
+sonar.host.url=http://localhost:9000
+'''
+    }
+}
 
         stage('Generate SBOM') {
             steps {
