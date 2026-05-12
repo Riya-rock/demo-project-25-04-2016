@@ -27,10 +27,13 @@ sonar.host.url=http://localhost:9000
 }
 
         stage('Generate SBOM') {
-            steps {
-                sh 'cyclonedx-py environment -o sbom.xml'
-            }
-        }
+    steps {
+        sh '''
+        python3 -m pip install --user cyclonedx-bom
+        python3 -m cyclonedx_py environment -o sbom.xml
+        '''
+    }
+}
 
         stage('Trivy Container Scan') {
             steps {
