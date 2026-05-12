@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     stages {
+
         stage('Clone') {
             steps {
                 echo 'Code cloned'
@@ -15,29 +16,47 @@ pipeline {
         }
 
         stage('SonarQube Scan') {
-    steps {
-        script {
-            def scannerHome = tool 'SonarScanner'
+            steps {
+                script {
 
-            withSonarQubeEnv('SonarQube') {
-                withCredentials([string(credentialsId: 'SONAR_AUTH_TOKEN', variable: 'SONAR_TOKEN')]) {
-                    sh scannerHome + '/bin/sonar-scanner -Dsonar.projectKey=riya-todo-app -Dsonar.sources=. -Dsonar.host.url=http://localhost:9000 -Dsonar.login=$SONAR_TOKEN'
+                    def scannerHome = tool 'SonarScanner'
+
+                    withSonarQubeEnv('SonarQube') {
+
+                        withCredentials([string(credentialsId: 'SONAR_AUTH_TOKEN', variable: 'SONAR_TOKEN')]) {
+
+                            sh """
+                            ${scannerHome}/bin/sonar-scanner \
+                            -Dsonar.projectKey=riya-todo-app \
+                            -Dsonar.sources=. \
+                            -Dsonar.host.url=http://localhost:9000 \
+                            -Dsonar.login=${SONAR_TOKEN}
+                            """
+                        }
+                    }
                 }
             }
         }
-    }
-}
 
         stage('Generate SBOM') {
-    steps {
-        sh 'export PATH=$PATH:/home/riyamhatre/.local/bin && cyclonedx-py environment -o sbom.xml'
-    }
-}
- stage('Trivy Container Scan') {
             steps {
-               sh 'trivy image --scanners vuln --severity HIGH,CRITICAL --exit-code 0 --no-progress dockeriya03/riya-todo-app:latest'
+                sh 'cyclonedx-py environment -o sbom.xml'
             }
         }
+
+        stage('Trivy Container Scan') {
+            steps {
+                sh '''
+                trivy image \
+                --scanners vuln \
+                --severity HIGH,CRITICAL \
+                --exit-code 0 \
+                --no-progress \
+                riya-todo-app
+                '''
+            }
+        }
+
         stage('Run Container') {
             steps {
                 sh 'docker rm -f riya-container || true'
