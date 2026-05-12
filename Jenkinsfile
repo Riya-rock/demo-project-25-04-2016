@@ -49,7 +49,13 @@ sonar.host.url=http://localhost:9000
                 '''
             }
         }
-
+        stage('Secret scanning (TruffleHog)') {
+    steps {
+        sh '''
+        docker run --rm -v "$PWD:/repo" trufflesecurity/trufflehog:latest filesystem /repo --exclude-paths=/repo/.git --no-update --only-verified
+        '''
+    }
+}
         stage('Run Container') {
             steps {
                 sh 'docker rm -f riya-container || true'
