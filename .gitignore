@@ -57,3 +57,11 @@ docs/_build/
 target/
 
 .DS_Store
+venv/
+.scannerwork/
+*.zip
+k8s/sonarqube-10.5.1.90531/
+__pycache__/
+*.pyc
+sbom.json
+sbom.xml
