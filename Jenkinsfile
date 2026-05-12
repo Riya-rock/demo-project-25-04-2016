@@ -29,8 +29,10 @@ sonar.host.url=http://localhost:9000
         stage('Generate SBOM') {
     steps {
         sh '''
-        python3 -m pip install --user cyclonedx-bom
-        python3 -m cyclonedx_py environment -o sbom.xml
+        python3 -m venv sbom-venv
+        . sbom-venv/bin/activate
+        pip install cyclonedx-bom
+        cyclonedx-py environment -o sbom.xml
         '''
     }
 }
