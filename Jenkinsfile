@@ -15,14 +15,14 @@ pipeline {
             }
         }
 
-        stage('Create Sonar Properties') {
+        stage('SonarQube Scan') {
     steps {
-        writeFile file: 'sonar-project.properties', text: '''
-sonar.projectKey=riya-todo-app
-sonar.projectName=riya-todo-app
-sonar.sources=.
-sonar.host.url=http://localhost:9000
-'''
+        script {
+            def scannerHome = tool 'SonarScanner'
+            withSonarQubeEnv('SonarQube') {
+                sh "${scannerHome}/bin/sonar-scanner"
+            }
+        }
     }
 }
 
