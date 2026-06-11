@@ -33,38 +33,20 @@ pipeline {
             }
         }
 
-      stage('SonarQube Scan') {
-    steps {
-<<<<<<< HEAD
-        withCredentials([string(credentialsId: 'SONAR_AUTH_TOKEN', variable: 'SONAR_TOKEN')]) {
-            sh '''
-            /opt/sonar-scanner/bin/sonar-scanner \
-            -Dsonar.projectKey=riya-todo-app \
-            -Dsonar.projectName=riya-todo-app \
-            -Dsonar.sources=. \
-            -Dsonar.host.url=http://localhost:9000 \
-            -Dsonar.token=$SONAR_TOKEN
-            '''
+        stage('SonarQube Scan') {
+            steps {
+                withCredentials([string(credentialsId: 'SONAR_AUTH_TOKEN', variable: 'SONAR_TOKEN')]) {
+                    sh '''
+                    /opt/sonar-scanner/bin/sonar-scanner \
+                    -Dsonar.projectKey=riya-todo-app \
+                    -Dsonar.projectName=riya-todo-app \
+                    -Dsonar.sources=. \
+                    -Dsonar.host.url=http://localhost:9000 \
+                    -Dsonar.token=$SONAR_TOKEN
+                    '''
+                }
+            }
         }
-=======
-        writeFile file: 'sonar-project.properties', text: '''
-stage('Generate SBOM') {
-    steps {
-        sh '''
-        python3 -m pip install --user cyclonedx-bom
-        python3 -m cyclonedx_py environment -o sbom.xml
-        '''
-    }
-}
-
-sonar.projectKey=riya-todo-app
-sonar.projectName=riya-todo-app
-sonar.sources=.
-sonar.host.url=http://localhost:9000
-'''
->>>>>>> 11e1bed (Fix SonarQube stage)
-    }
-}
 
         stage('Generate SBOM') {
             steps {
