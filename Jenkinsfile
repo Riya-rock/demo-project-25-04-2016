@@ -14,18 +14,18 @@ pipeline {
         }
 
         stage('Vault Login and Read Secret') {
-            steps {
-                withCredentials([
-                    string(credentialsId: 'VAULT_ROLE_ID', variable: 'ROLE_ID'),
-                    string(credentialsId: 'VAULT_SECRET_ID', variable: 'SECRET_ID')
-                ]) {
-                    bat '''
-                    vault write auth/approle/login role_id=%ROLE_ID% secret_id=%SECRET_ID%
-                    vault kv get dev/testapp/sample
-                    '''
-                }
-            }
+    steps {
+        withCredentials([
+            string(credentialsId: 'VAULT_ROLE_ID', variable: 'ROLE_ID'),
+            string(credentialsId: 'VAULT_SECRET_ID', variable: 'SECRET_ID')
+        ]) {
+            sh '''
+            vault write auth/approle/login role_id=$ROLE_ID secret_id=$SECRET_ID
+            vault kv get dev/testapp/sample
+            '''
         }
+    }
+}
 
         stage('Build Docker Image') {
             steps {
