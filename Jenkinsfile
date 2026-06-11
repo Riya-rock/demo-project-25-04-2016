@@ -29,7 +29,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                bat 'docker build -t riya-todo-app .'
+                sh 'docker build -t riya-todo-app .'
             }
         }
 
@@ -38,7 +38,7 @@ pipeline {
                 script {
                     def scannerHome = tool 'SonarScanner'
                     withSonarQubeEnv('SonarQube') {
-                        bat """
+                        sh """
                         "${scannerHome}\\bin\\sonar-scanner.bat" ^
                         -Dsonar.projectKey=riya-todo-app ^
                         -Dsonar.projectName=riya-todo-app ^
@@ -53,7 +53,7 @@ pipeline {
 
         stage('Generate SBOM') {
             steps {
-                bat '''
+                sh '''
                 python -m venv sbom-venv
                 call sbom-venv\\Scripts\\activate
                 pip install cyclonedx-bom
@@ -64,20 +64,20 @@ pipeline {
 
         stage('Trivy Container Scan') {
             steps {
-                bat 'trivy image --scanners vuln --severity HIGH,CRITICAL --exit-code 0 --no-progress riya-todo-app'
+                sh 'trivy image --scanners vuln --severity HIGH,CRITICAL --exit-code 0 --no-progress riya-todo-app'
             }
         }
 
         stage('Secret scanning (TruffleHog)') {
             steps {
-                bat 'docker run --rm -v "%CD%:/repo" trufflesecurity/trufflehog:latest filesystem /repo --exclude-paths=/repo/.git --no-update --only-verified'
+                sh 'docker run --rm -v "%CD%:/repo" trufflesecurity/trufflehog:latest filesystem /repo --exclude-paths=/repo/.git --no-update --only-verified'
             }
         }
 
         stage('Run Container') {
             steps {
-                bat 'docker rm -f riya-container || exit 0'
-                bat 'docker run -d -p 8000:8000 --name riya-container riya-todo-app'
+                sh 'docker rm -f riya-container || exit 0'
+                sh 'docker run -d -p 8000:8000 --name riya-container riya-todo-app'
             }
         }
     }
