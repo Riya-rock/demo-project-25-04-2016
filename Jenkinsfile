@@ -37,7 +37,6 @@ pipeline {
             steps {
                 script {
                     def scannerHome = tool 'SonarScanner'
-
                     withSonarQubeEnv('SonarQube') {
                         bat """
                         "${scannerHome}\\bin\\sonar-scanner.bat" ^
@@ -65,17 +64,13 @@ pipeline {
 
         stage('Trivy Container Scan') {
             steps {
-                bat '''
-                trivy image --scanners vuln --severity HIGH,CRITICAL --exit-code 0 --no-progress riya-todo-app
-                '''
+                bat 'trivy image --scanners vuln --severity HIGH,CRITICAL --exit-code 0 --no-progress riya-todo-app'
             }
         }
 
         stage('Secret scanning (TruffleHog)') {
             steps {
-                bat '''
-                docker run --rm -v "%CD%:/repo" trufflesecurity/trufflehog:latest filesystem /repo --exclude-paths=/repo/.git --no-update --only-verified
-                '''
+                bat 'docker run --rm -v "%CD%:/repo" trufflesecurity/trufflehog:latest filesystem /repo --exclude-paths=/repo/.git --no-update --only-verified'
             }
         }
 
@@ -83,14 +78,6 @@ pipeline {
             steps {
                 bat 'docker rm -f riya-container || exit 0'
                 bat 'docker run -d -p 8000:8000 --name riya-container riya-todo-app'
-            }
-        }
-    }
-}
-        stage('Run Container') {
-            steps {
-                sh 'docker rm -f riya-container || true'
-                sh 'docker run -d -p 8000:8000 --name riya-container riya-todo-app'
             }
         }
     }
