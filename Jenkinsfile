@@ -33,14 +33,14 @@ pipeline {
             }
         }
 
-       stage('SonarQube Scan') {
+      stage('SonarQube Scan') {
     steps {
-        script {
-            def scannerHome = tool 'SonarScanner'
-            withSonarQubeEnv('SonarQube') {
-                sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=riya-todo-app -Dsonar.projectName=riya-todo-app -Dsonar.sources=. -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.token=${SONAR_AUTH_TOKEN}"
-            }
-        }
+        sh '''
+        sonar-scanner \
+        -Dsonar.projectKey=riya-todo-app \
+        -Dsonar.sources=. \
+        -Dsonar.host.url=http://localhost:9000
+        '''
     }
 }
 
