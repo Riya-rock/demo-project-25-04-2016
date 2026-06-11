@@ -35,14 +35,14 @@ pipeline {
 
       stage('SonarQube Scan') {
     steps {
-        withSonarQubeEnv('SonarQube') {
+        withCredentials([string(credentialsId: 'SONAR_AUTH_TOKEN', variable: 'SONAR_TOKEN')]) {
             sh '''
             /opt/sonar-scanner/bin/sonar-scanner \
             -Dsonar.projectKey=riya-todo-app \
             -Dsonar.projectName=riya-todo-app \
             -Dsonar.sources=. \
             -Dsonar.host.url=http://localhost:9000 \
-            -Dsonar.token=$SONAR_AUTH_TOKEN
+            -Dsonar.token=$SONAR_TOKEN
             '''
         }
     }
